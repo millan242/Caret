@@ -1,0 +1,27 @@
+{
+  "dependencies": {
+    "@openrouter/sdk": "^0.3.11",
+    "chalk": "^5.6.2",
+    "dotenv": "^17.2.3",
+    "ora": "^9.0.0"
+  },
+  "name": "caret",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node --watch index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/millan242/Caret.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/millan242/Caret/issues"
+  },
+  "homepage": "https://github.com/millan242/Caret#readme"
+}
