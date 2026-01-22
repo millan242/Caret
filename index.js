@@ -10,8 +10,27 @@ import ora from 'ora'
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 
 const client = new OpenRouter({
-    apiKey: OPENROUTER_API_KEY
+   apiKey: OPENROUTER_API_KEY
 });
+
+const getProjectContext = (dir = '.') => {
+   try {
+      const files = fs.readdirSync(dir, { withFileTypes: true }) // it returns fs.Dirent objects. This allows the code to check if an item is a file or a folder later using .isDirectory().
+      const structure = files
+         .filter(f => !f.name.startsWith('.') && f.name !== 'node_modules')
+         .map(f => f.isDirectory() ? `📁 ${f.name}/` : `📄 ${f.name}`)
+         .join('\n')
+      let projectInfo = ''
+      if (fs.existsSync(path.join(dir, 'package.json'))) {
+         const pkg = JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8'))
+         projectInfo = `\nProject: ${pkg.name || 'unknown'}\nType: ${pkg.type || 'commonjs'}\n`
+      }
+
+      return projectInfo + (structure || 'Empty directory')
+   } catch (error) {
+      return 'Unable to read directory'
+   }
+}
 
 const SYSTEM_PROMPT = `You are an expert AI coding assistant CLI tool.
 
@@ -76,16 +95,16 @@ User: "fix the bug in App.js"
 → read_file App.js → identify issue → update_file → done`
 
 async function init() {
-    const response = await client.chat.send({
-        model: "xiaomi/mimo-v2-flash:free",
-        response_format: { type: 'json_object' },
-        messages: [
-            {
-                role: "user",
-                content: "Can you add a file in my folder named main.js"
-            }
-        ],
-    })
-    console.log(response.choices[0].message.content)
+   const response = await client.chat.send({
+      model: "xiaomi/mimo-v2-flash:free",
+      response_format: { type: 'json_object' },
+      messages: [
+         {
+            role: "user",
+            content: "Can you add a file in my folder named main.js"
+         }
+      ],
+   })
+   console.log(response.choices[0].message.content)
 }
 init()
