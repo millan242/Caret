@@ -7,19 +7,21 @@ import readline from 'node:readline'
 import chalk from 'chalk'
 import ora from 'ora'
 
-const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY
 
 const client = new OpenRouter({
    apiKey: OPENROUTER_API_KEY
 });
 
-const getProjectContext = (dir = '.') => {
+// Get project context
+function getProjectContext(dir = '.') {
    try {
-      const files = fs.readdirSync(dir, { withFileTypes: true }) // it returns fs.Dirent objects. This allows the code to check if an item is a file or a folder later using .isDirectory().
+      const files = fs.readdirSync(dir, { withFileTypes: true })
       const structure = files
          .filter(f => !f.name.startsWith('.') && f.name !== 'node_modules')
          .map(f => f.isDirectory() ? `📁 ${f.name}/` : `📄 ${f.name}`)
          .join('\n')
+
       let projectInfo = ''
       if (fs.existsSync(path.join(dir, 'package.json'))) {
          const pkg = JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8'))
@@ -58,8 +60,8 @@ AVAILABLE TOOLS:
 7. delete_file: Deletes a file
    Input: { "path": "old-file.js" }
 
-8. scaffold_project: Creates a complete project structure
-   Input: { "type": "react|express|html", "name": "my-app" }
+8. analyze_code: Analyzes code for bugs, security issues, and improvements
+   Input: { "path": "src/App.jsx", "focus": "performance|security|bugs|style|all" }
 
 RESPONSE FORMAT (JSON):
 {
@@ -83,16 +85,21 @@ GUIDELINES:
 EXAMPLES:
 
 User: "create a react app"
-→ scaffold_project → install deps → done
+→ create_folder src → create_file package.json → create_file src/App.jsx → install deps → done
+
+User: "analyze my App.jsx for bugs"
+→ analyze_code (focus: bugs) → report findings → suggest fixes → done
 
 User: "add error handling to server.js"
 → read_file server.js → update_file with error handling → done
 
-User: "make a todo component"
-→ create_file src/components/Todo.jsx → done
+User: "review my code for security issues"
+→ analyze_code (focus: security) → list vulnerabilities → provide solutions → done
 
-User: "fix the bug in App.js"
-→ read_file App.js → identify issue → update_file → done`
+User: "make a todo component"
+→ create_file src/components/Todo.jsx → done`
+
+const tools=
 
 async function init() {
    const response = await client.chat.send({
